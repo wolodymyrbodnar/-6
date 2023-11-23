@@ -1,0 +1,67 @@
+def input_matrix(size):
+    matrix = []
+    for i in range(size):
+        try:
+            row_input = input(f"Введіть рядок матриці (числа, розділені пробілами) для рядка {i + 1}: ")
+            row = list(map(float, row_input.split()))
+
+            if len(row) != size:
+                print(f"Помилка: Введіть рівно {size} числа для рядка.")
+                return None
+
+            matrix.append(row)
+        except ValueError:
+            print("Помилка введення! Спробуйте ще раз.")
+            return None
+    return matrix
+
+
+def write_matrix_to_file(matrix, output_file_path):
+    with open(output_file_path, 'w') as file:
+        for row in matrix:
+            file.write(' '.join(map(str, row)) + '\n')
+
+
+def calculate_determinant(matrix):
+    size = len(matrix)
+
+    if size == 1:
+        return matrix[0][0]
+    elif size == 2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+    else:
+        determinant = 0
+        for i in range(size):
+            submatrix = [row[:i] + row[i + 1:] for row in matrix[1:]]
+            sign = (-1) ** i
+            determinant += sign * matrix[0][i] * calculate_determinant(submatrix)
+        return determinant
+
+
+# Приклад використання:
+try:
+    size = int(input('Виберіть розмір матриці (2 або 3): '))
+
+    if size != 2 and size != 3:
+        print("Непідтримуваний розмір матриці. Введіть 2 або 3.")
+        raise ValueError
+
+    matrix = input_matrix(size)
+
+    if matrix is not None:
+        print(f'Введена матриця {size}x{size}:')
+        for row in matrix:
+            print(row)
+
+        output_file_path = input('Введіть ім\'я файлу для збереження матриці (з розширенням, наприклад, matrix.txt): ')
+
+        write_matrix_to_file(matrix, output_file_path)
+
+        determinant = calculate_determinant(matrix)
+        print(f'Визначник матриці: {determinant}')
+
+        print(f'Матрицю та визначник записано у файл {output_file_path}.')
+except ValueError:
+    print('Виникла помилка. Спробуйте ще раз.')
+except Exception as e:
+    print(f'Виникла помилка: {e}.')
