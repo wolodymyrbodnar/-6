@@ -16,10 +16,13 @@ def input_matrix(size):
     return matrix
 
 
-def write_matrix_to_file(matrix, output_file_path):
+def write_matrix_and_determinant_to_file(matrix, determinant, output_file_path):
     with open(output_file_path, 'w') as file:
+        file.write("Matrix\n")
         for row in matrix:
             file.write(' '.join(map(str, row)) + '\n')
+        file.write(f"Determinant: {determinant:.2f}")
+        print(f'Матрицю та визначник записано у файл {output_file_path}')
 
 
 def calculate_determinant(matrix):
@@ -38,30 +41,35 @@ def calculate_determinant(matrix):
         return determinant
 
 
-# Приклад використання:
-try:
-    size = int(input('Виберіть розмір матриці (2 або 3): '))
+# Повторення до тих пір, поки користувач не введе 'q'
+while True:
+    try:
+        size_input = input('Виберіть розмір матриці (2 або 3), або введіть "q" для виходу: ')
 
-    if size != 2 and size != 3:
-        print("Непідтримуваний розмір матриці. Введіть 2 або 3.")
-        raise ValueError
+        if size_input == 'q':
+            break  # Вихід з циклу, якщо користувач ввів 'q'
 
-    matrix = input_matrix(size)
+        size = int(size_input)
 
-    if matrix is not None:
-        print(f'Введена матриця {size}x{size}:')
-        for row in matrix:
-            print(row)
+        if size != 2 and size != 3:
+            print("Непідтримуваний розмір матриці. Введіть 2 або 3.")
+            raise ValueError
 
-        output_file_path = input('Введіть ім\'я файлу для збереження матриці (з розширенням, наприклад, matrix.txt): ')
+        matrix = input_matrix(size)
 
-        write_matrix_to_file(matrix, output_file_path)
+        if matrix is not None:
+            print(f'Введена матриця {size}x{size}:')
+            for row in matrix:
+                print(row)
 
-        determinant = calculate_determinant(matrix)
-        print(f'Визначник матриці: {determinant}')
+            output_file_path = input(
+                'Введіть ім\'я файлу для збереження матриці та визначника (з розширенням, наприклад, matrix.txt): ')
 
-        print(f'Матрицю та визначник записано у файл {output_file_path}.')
-except ValueError:
-    print('Виникла помилка. Спробуйте ще раз.')
-except Exception as e:
-    print(f'Виникла помилка: {e}.')
+            determinant = calculate_determinant(matrix)
+
+            write_matrix_and_determinant_to_file(matrix, determinant, output_file_path)
+
+    except ValueError:
+        print('Виникла помилка. Спробуйте ще раз.')
+    except Exception as e:
+        print(f'Виникла помилка: {e}.')
